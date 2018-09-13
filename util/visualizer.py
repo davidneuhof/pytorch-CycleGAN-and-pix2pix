@@ -87,6 +87,9 @@ class Visualizer():
                 idx = 0
                 for label, image in visuals.items():
                     image_numpy = util.tensor2im(image)
+                    if image_numpy.shape[2] == 4:
+                        # alpha = (image_numpy[...,3:] < 127).astype(np.uint8)
+                        image_numpy = image_numpy[..., :3]
                     label_html_row += '<td>%s</td>' % label
                     images.append(image_numpy.transpose([2, 0, 1]))
                     idx += 1

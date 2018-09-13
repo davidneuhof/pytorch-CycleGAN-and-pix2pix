@@ -62,6 +62,8 @@ class Pix2PixModel(BaseModel):
         self.real_A = input['A' if AtoB else 'B'].to(self.device)
         self.real_B = input['B' if AtoB else 'A'].to(self.device)
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
+        if self.opt.use_mask_for_L1:
+            self.M = input['M'].to(self.device)
 
     def forward(self):
         self.fake_B = self.netG(self.real_A)
@@ -90,7 +92,10 @@ class Pix2PixModel(BaseModel):
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
 
         # Second, G(A) = B
-        self.loss_G_L1 = self.criterionL1(self.fake_B, self.real_B) * self.opt.lambda_L1
+        if self.opt.use_mask_for_L1:
+            self.loss_G_L1 = self.criterionL1(self.fake_B*self.M, self.real_B*self.M) * self.opt.lambda_L1
+        else:
+            self.loss_G_L1 = self.criterionL1(self.fake_B, self.real_B) * self.opt.lambda_L1
 
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
 

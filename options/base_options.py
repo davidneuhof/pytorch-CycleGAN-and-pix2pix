@@ -41,6 +41,7 @@ class BaseOptions():
         parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
         parser.add_argument('--verbose', action='store_true', help='if specified, print more debugging information')
         parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{loadSize}')
+        parser.add_argument('--use_mask_for_L1', action='store_true', help='use inpainting mask for L1 loss')
         self.initialized = True
         return parser
 

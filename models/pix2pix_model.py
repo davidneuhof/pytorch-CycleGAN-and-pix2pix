@@ -27,7 +27,7 @@ class Pix2PixModel(BaseModel):
         # specify the training losses you want to print out. The program will call base_model.get_current_losses
         self.loss_names = ['G_GAN', 'G_L1', 'D_real', 'D_fake']
         # specify the images you want to save/display. The program will call base_model.get_current_visuals
-        self.visual_names = ['real_A', 'fake_B', 'real_B']
+        self.visual_names = ['real_A', 'fake_B', 'real_B', 'blended', 'M']
         # specify the models you want to save to the disk. The program will call base_model.save_networks and base_model.load_networks
         if self.isTrain:
             self.model_names = ['G', 'D']
@@ -67,6 +67,10 @@ class Pix2PixModel(BaseModel):
 
     def forward(self):
         self.fake_B = self.netG(self.real_A)
+
+        self.blended = self.real_B.clone()
+        M3 = torch.cat((self.M,)*3, 1)
+        self.blended[M3>0] = self.fake_B[M3>0]
 
     def backward_D(self):
         # Fake
